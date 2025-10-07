@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Генератор паролей</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #password {
+            margin-top: 20px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 Генератор паролей</h1>
+
+    <div class="form-group">
+        <label for="length">Длина пароля: <span id="length-value">12</span></label>
+        <input type="range" id="length" min="4" max="50" value="12">
+    </div>
+
+    <div class="form-group">
+        <label><input type="checkbox" id="uppercase" checked> Заглавные буквы</label>
+    </div>
+    <div class="form-group">
+        <label><input type="checkbox" id="digits" checked> Цифры</label>
+    </div>
+    <div class="form-group">
+        <label><input type="checkbox" id="symbols" checked> Символы (!@#$% и т.д.)</label>
+    </div>
+
+    <button onclick="generatePassword()">Сгенерировать пароль</button>
+
+    <div id="password"></div>
+
+    <script>
+        document.getElementById('length').addEventListener('input', function() {
+            document.getElementById('length-value').textContent = this.value;
+        });
+
+        async function generatePassword() {
+            const length = document.getElementById('length').value;
+            const uppercase = document.getElementById('uppercase').checked;
+            const digits = document.getElementById('digits').checked;
+            const symbols = document.getElementById('symbols').checked;
+
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ length, uppercase, digits, symbols })
+            });
+
+            const data = await response.json();
+            document.getElementById('password').textContent = data.password;
+        }
+    </script>
+</body>
+</html>
